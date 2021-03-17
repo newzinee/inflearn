@@ -9,5 +9,10 @@ const addSum = (a, b) => new Promise((resolve, reject) => {
 
 
 addSum(10,20)
-    .then(sum => console.log({ sum }))
+    .then(sum1 => {
+        console.log({ sum1 })
+        return addSum(sum1, 3)
+    })
+    .then(sum2 => addSum(sum2, 1))
+    .then(sum2 => console.log({ sum2 }))
     .catch(error => console.log({ error }))
