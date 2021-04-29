@@ -3,7 +3,7 @@ const app = express();
 const mongoose = require('mongoose');
 const { User } = require('./models/User')
 
-const MONGO_URI = 'mongodb+srv://admin:6Zwhm25KTEOkEj5U@tutorial.gwxhv.mongodb.net/BlogService?retryWrites=true&w=majority';
+const MONGO_URI = 'mongodb+srv://yjjung:@inflean-mongodb.gwxhv.mongodb.net/BlogService?retryWrites=true&w=majority';
 
 const server = async() => {
     try {
@@ -22,6 +22,20 @@ const server = async() => {
             }
         })
     
+        app.get("/user/:userId", async (req, res) => {
+            try {
+                const { userId } = req.params;
+                if(!mongoose.isValidObjectId(userId))
+                    return res.status(400).send({ err: "invalid userId" });
+                const user = await User.findOne({ _id: userId });
+                return res.send({ user });
+            } catch(err) {
+                console.log(err);
+                return res.status(500).send({ err: err.message })
+            }
+
+        })
+
         app.post("/user", async (req, res) => {
             try {
                 let {username, name} = req.body; // let username = req.body.username; 동일
