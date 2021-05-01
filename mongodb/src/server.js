@@ -7,7 +7,7 @@ const MONGO_URI = 'mongodb+srv://yjjung:@inflean-mongodb.gwxhv.mongodb.net/BlogS
 
 const server = async() => {
     try {
-        await mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
+        await mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify:false });
         console.log('MongoDB connected')
     
         app.use(express.json())
@@ -64,6 +64,23 @@ const server = async() => {
             }
         })
     
+        app.put("/user/:userId", async(req,res) => {
+            try {
+                const { userId } = req.params;
+                if(!mongoose.isValidObjectId(userId))
+                    return res.status(400).send({ err: "invalid userId" });
+                const { age } = req.body;
+                if(!age) return res.status(400).send({err: "age is required"});
+                if(typeof age !== 'number') return res.status(400).send({err:"age must be a number"});
+
+                const user = await User.findByIdAndUpdate(userId, { $set: { age } }, { new: true });
+                return res.send(user);
+            } catch(err) {
+                console.log(err);
+                return res.status(500).send({ err: err.message })
+            }
+        })
+
         app.listen(3000, () => console.log('server listening on port 3000'))
     } catch(err) {
         console.log(err)
