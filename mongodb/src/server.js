@@ -70,11 +70,15 @@ const server = async() => {
                 const { userId } = req.params;
                 if(!mongoose.isValidObjectId(userId))
                     return res.status(400).send({ err: "invalid userId" });
-                const { age } = req.body;
-                if(!age) return res.status(400).send({err: "age is required"});
-                if(typeof age !== 'number') return res.status(400).send({err:"age must be a number"});
+                const { age, name } = req.body;
+                if(!age && !name) return res.status(400).send({ err: "age or name is required" });
+                if(age && typeof age !== 'number') return res.status(400).send({err:"age must be a number"});
+                if(name && typeof name.first !== 'string' && typeof name.last !== 'string') return res.status(400).send({ err: "fisrt and last name are not strings." });
+                let updateBody = {};
+                if(age) updateBody.age = age;
+                if(name) updateBody.name = name;
 
-                const user = await User.findByIdAndUpdate(userId, { age }, { new: true });
+                const user = await User.findByIdAndUpdate(userId, updateBody, { new: true });
                 return res.send(user);
             } catch(err) {
                 console.log(err);
