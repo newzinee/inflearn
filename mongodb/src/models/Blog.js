@@ -1,6 +1,6 @@
-const { Schema, model, Types } = require('mongodb');
+const { Schema, model, Types } = require('mongoose');
 
-const BlocSchema = new Schema(
+const BlogSchema = new Schema(
 	{
 		title: { type: String, required: true },
 		content: { type: String, required: true },
